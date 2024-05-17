@@ -21,8 +21,8 @@ jobs:
           run: |
             sudo xargs apt-get install -y < .github/workflows/apt-packages.txt
             pip3 install git+https://github.com/riscv/riscof.git
-            wget -c https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/2023.12.20/riscv64-elf-ubuntu-22.04-gcc-nightly-2023.12.20-nightly.tar.gz
-            tar -xzf riscv64-elf-ubuntu-22.04-gcc-nightly-2023.12.20-nightly.tar.gz
+            wget -c https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/2024.04.12/riscv64-elf-ubuntu-22.04-gcc-nightly-2024.04.12-nightly.tar.gz
+            tar -xzf riscv64-elf-ubuntu-22.04-gcc-nightly-2024.04.12-nightly.tar.gz
             echo $GITHUB_WORKSPACE/riscv/bin >> $GITHUB_PATH
 
         - name: Build spike
@@ -38,7 +38,8 @@ jobs:
         - name: Init arch-tests
           run: |
             cd ci-tests/riscof
-            riscof arch-test --clone
+            git clone https://github.com/riscv-non-isa/riscv-arch-test
+            cd riscv-arch-test && git fetch --tags && git checkout tags/3.8.10
 
         - name: Run RV32E
           run: |

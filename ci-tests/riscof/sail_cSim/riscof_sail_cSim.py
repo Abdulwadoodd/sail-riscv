@@ -83,19 +83,25 @@ class sail_cSim(pluginTemplate):
     def build(self, isa_yaml, platform_yaml):
         ispec = utils.load_yaml(isa_yaml)['hart0']
         self.xlen = ('64' if 64 in ispec['supported_xlen'] else '32')
-        self.isa = 'rv' + self.xlen
+        self.isa = ' '  # 'rv' + self.xlen
         ilp32 = 'ilp32e ' if "E" in ispec["ISA"] else 'ilp32 '
         self.compile_cmd = self.compile_cmd+' -mabi='+('lp64 ' if 64 in ispec['supported_xlen'] else ilp32)
-        if "I" in ispec["ISA"]:
-            self.isa += 'i'
-        if "M" in ispec["ISA"]:
-            self.isa += 'm'
-        if "C" in ispec["ISA"]:
-            self.isa += 'c'
-        if "F" in ispec["ISA"]:
-            self.isa += 'f'
-        if "D" in ispec["ISA"]:
-            self.isa += 'd'
+        # if "I" in ispec["ISA"]:
+        #     self.isa += 'i'
+        # if "M" in ispec["ISA"]:
+        #     self.isa += 'm'
+        # if "C" in ispec["ISA"]:
+        #     self.isa += 'c'
+        # if "F" in ispec["ISA"]:
+        #     self.isa += 'f'
+        # if "D" in ispec["ISA"]:
+        #     self.isa += 'd'
+
+        # flag for sail-riscv to enable zcb extension.
+        # sail model does not yet offer flags for other extensions, supported extensions are enabled by default
+        if "Zcb" in ispec["ISA"]:
+            self.isa += ' --enable-zcb'
+
         objdump = "riscv64-unknown-elf-objdump"
         if shutil.which(objdump) is None:
             logger.error(objdump+": executable not found. Please check environment setup.")
@@ -134,7 +140,7 @@ class sail_cSim(pluginTemplate):
             sig_file = os.path.join(test_dir, self.name[:-1] + ".signature")
 
             # execute += self.sail_exe[self.xlen] + ' --test-signature={0} {1} > {2}.log 2>&1;'.format(sig_file, elf, test_name)
-            execute += self.sail_exe[self.xlen] + ' --no-trace --test-signature={0} {1} > /dev/null;'.format(sig_file, elf)
+            execute += self.sail_exe[self.xlen] + ' {0} --no-trace --test-signature={1} {2} > /dev/null;'.format(self.isa, sig_file, elf)
 
             make.add_target(execute)
         make.execute_all(self.work_dir)

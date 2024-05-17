@@ -128,6 +128,12 @@ class spike(pluginTemplate):
           self.isa += '_zicond'
       if "Zicboz" in ispec["ISA"]:
           self.isa += '_zicboz'
+      if "Zfa" in ispec["ISA"]:
+          self.isa += '_zfa'
+      if "Zfa" in ispec["ISA"]:
+          self.isa += '_zfh'
+      if "Zfinx" in ispec["ISA"]:
+          self.isa += '_zfinx'
 
     def runTests(self, testList):
 
@@ -148,7 +154,7 @@ class spike(pluginTemplate):
 
           test_dir = testentry['work_dir']
 
-          elf = '{0}.elf'.format(testname)
+          elf = 'dut.elf'
 
           sig_file = os.path.join(test_dir, self.name[:-1] + ".signature")
 
