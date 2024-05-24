@@ -1,6 +1,28 @@
 #ifndef _COMPLIANCE_MODEL_H
 #define _COMPLIANCE_MODEL_H
 
+// clang-format off
+#define RVMODEL_DATA_SECTION .pushsection                                      \
+  .tohost, "aw", @progbits;                                                    \
+  .align 8;                                                                    \
+  .global tohost;                                                              \
+  tohost:                                                                      \
+  .dword 0;                                                                    \
+  .align 8;                                                                    \
+  .global fromhost;                                                            \
+  fromhost:                                                                    \
+  .dword 0;                                                                    \
+  .popsection;                                                                 \
+  .align 8;                                                                    \
+  .global begin_regstate;                                                      \
+  begin_regstate:                                                              \
+  .word 128;                                                                   \
+  .align 8;                                                                    \
+  .global end_regstate;                                                        \
+  end_regstate:                                                                \
+  .word 4;
+
+// clang-format on
 #define RVMODEL_HALT                                                           \
   li x1, 1;                                                                    \
   write_tohost:                                                                \

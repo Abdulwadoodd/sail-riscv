@@ -9,7 +9,7 @@ on:
         - master
 
 jobs:
-    model-testing:
+    act_cross_check:
         runs-on: ubuntu-latest
 
         steps:
@@ -27,23 +27,23 @@ jobs:
 
         - name: Build spike
           run: |
-            ci-tests/build-spike
+            test/act_cross_check/build-spike
             echo $GITHUB_WORKSPACE/install/bin >> $GITHUB_PATH
 
         - name: Build Sail
           run: |
-            ci-tests/build-sail
+            test/act_cross_check/build-sail
             echo $GITHUB_WORKSPACE/c_emulator >> $GITHUB_PATH
 
         - name: Init arch-tests
           run: |
-            cd ci-tests/riscof
+            cd test/act_cross_check/riscof
             git clone https://github.com/riscv-non-isa/riscv-arch-test
-            cd riscv-arch-test && git fetch --tags && git checkout tags/3.8.10
+            cd riscv-arch-test && git fetch --tags && git checkout tags/3.9
 
         - name: Run RV32E
           run: |
-            cd ci-tests/riscof
+            cd test/act_cross_check/riscof
             sed -i 's/\(ispec=\)\(.*\)/\1spike\/spike_isa32e.yaml/' config.ini
             ./run-tests.sh rv32e_work
 
@@ -52,12 +52,12 @@ jobs:
           with:
             name: artifacts_rv32e
             path: |
-              ci-tests/riscof/rv32e_work/report.html
-              ci-tests/riscof/rv32e_work/style.css
+              test/act_cross_check/riscof/rv32e_work/report.html
+              test/act_cross_check/riscof/rv32e_work/style.css
 
         - name: Run RV32I
           run: |
-            cd ci-tests/riscof
+            cd test/act_cross_check/riscof
             sed -i 's/\(ispec=\)\(.*\)/\1spike\/spike_isa32.yaml/' config.ini
             ./run-tests.sh rv32i_work
 
@@ -66,12 +66,12 @@ jobs:
           with:
             name: artifacts_rv32i
             path: |
-              ci-tests/riscof/rv32i_work/report.html
-              ci-tests/riscof/rv32i_work/style.css
+              test/act_cross_check/riscof/rv32i_work/report.html
+              test/act_cross_check/riscof/rv32i_work/style.css
 
         - name: Run RV64I
           run: |
-            cd ci-tests/riscof
+            cd test/act_cross_check/riscof
             sed -i 's/\(ispec=\)\(.*\)/\1spike\/spike_isa64.yaml/' config.ini
             ./run-tests.sh rv64i_work
 
@@ -80,5 +80,5 @@ jobs:
           with:
             name: artifacts_rv64i
             path: |
-              ci-tests/riscof/rv64i_work/report.html
-              ci-tests/riscof/rv64i_work/style.css
+              test/act_cross_check/riscof/rv64i_work/report.html
+              test/act_cross_check/riscof/rv64i_work/style.css

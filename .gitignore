@@ -7,3 +7,4 @@ _sbuild/
 *.o
 *.a
 /z3_problems
+__pycache__/

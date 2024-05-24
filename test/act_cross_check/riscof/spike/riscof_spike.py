@@ -1,19 +1,8 @@
 import os
-import re
-import shutil
-import subprocess
-import shlex
-import logging
-import random
-import string
-from string import Template
-import sys
 
 import riscof.utils as utils
 import riscof.constants as constants
 from riscof.pluginTemplate import pluginTemplate
-
-logger = logging.getLogger()
 
 class spike(pluginTemplate):
     __model__ = "spike"
@@ -54,37 +43,6 @@ class spike(pluginTemplate):
          -T '+self.pluginpath+'/env/link.ld\
          -I '+self.pluginpath+'/env/\
          -I ' + archtest_env + ' {1} -o {2} {3}'
-
-       # workaround to avoid clang format error in sail-riscv CI.
-       # *clang suggest style that is syntactically incorrect*
-       # Insert the following macro at run-time.
-       modelTest_path = 'spike/env/model_test.h'
-       macro = """
-#define RVMODEL_DATA_SECTION .pushsection                                      \\
-  .tohost, "aw", @progbits;                                                    \\
-  .align 8;                                                                    \\
-  .global tohost;                                                              \\
-  tohost:                                                                      \\
-  .dword 0;                                                                    \\
-  .align 8;                                                                    \\
-  .global fromhost;                                                            \\
-  fromhost:                                                                    \\
-  .dword 0;                                                                    \\
-  .popsection;                                                                 \\
-  .align 8;                                                                    \\
-  .global begin_regstate;                                                      \\
-  begin_regstate:                                                              \\
-  .word 128;                                                                   \\
-  .align 8;                                                                    \\
-  .global end_regstate;                                                        \\
-  end_regstate:                                                                \\
-  .word 4;
-"""
-       with open(modelTest_path, 'r') as file:
-           modelTest = file.readlines()
-       modelTest.insert(2, macro)
-       with open(modelTest_path, 'w') as file:
-           file.writelines(modelTest)
 
     def build(self, isa_yaml, platform_yaml):
 
